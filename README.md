@@ -1,2 +1,2 @@
 # aco-simulator
-ACO for a multicast routing
+Simulating ACO for multicast routing problem in wireless networks
