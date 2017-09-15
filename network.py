@@ -55,10 +55,10 @@ class Network(object):
 
     def init_edges(self):
         """Find edges between nodes."""
-        for from_index, from_node in enumerate(self.nodes):
-            for to_index, to_node in enumerate(self.nodes):
+        for index, from_node in enumerate(self.nodes):
+            for to_node in self.nodes[index + 1:]:
                 distance = np.linalg.norm(from_node.location - to_node.location)
-                if from_index != to_index and distance <= self.max_edge_length:
+                if distance <= self.max_edge_length:
                     self.edges.append(Edge(distance, from_node, to_node))
-                    if from_index < to_index:
-                        self.unique_edges.append(self.edges[-1])
+                    self.unique_edges.append(self.edges[-1])
+                    self.edges.append(Edge(distance, to_node, from_node))
