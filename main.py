@@ -7,10 +7,15 @@ import matplotlib.pyplot as plt
 def main():
     network = Network()
 
+    for node in network.nodes:
+        for edge in network.get_node_edges(node):
+            print(edge.pheromone)
+        print("-" * 50)
+
     # Draw edges
     for edge in network.unique_edges:
         plt.plot([edge.from_node.location[0], edge.to_node.location[0]],
-                 [edge.from_node.location[1], edge.to_node.location[1]], color='black',linewidth=1)
+                 [edge.from_node.location[1], edge.to_node.location[1]], color='black', linewidth=1)
 
     # Draw all nodes
     plt.scatter([node.location[0] for node in network.nodes],

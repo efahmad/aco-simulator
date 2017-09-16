@@ -3,10 +3,11 @@ import random
 
 
 class Edge(object):
-    def __init__(self, length, from_node, to_node):
+    def __init__(self, length, from_node, to_node, pheromone=0):
         self.length = length
         self.from_node = from_node
         self.to_node = to_node
+        self.pheromone = pheromone
 
 
 class Node(object):
@@ -53,6 +54,9 @@ class Network(object):
         # Create edges between nodes
         self.init_edges()
 
+        # Init pheromone for each edge
+        self.init_pheromones()
+
     def init_edges(self):
         """Find edges between nodes."""
         for index, from_node in enumerate(self.nodes):
@@ -62,3 +66,28 @@ class Network(object):
                     self.edges.append(Edge(distance, from_node, to_node))
                     self.unique_edges.append(self.edges[-1])
                     self.edges.append(Edge(distance, to_node, from_node))
+
+    def get_node_neighbors(self, node):
+        return [edge.to_node for edge in self.get_node_edges(node)]
+
+    def get_node_edges(self, node):
+        return [edge for edge in self.edges if edge.from_node is node]
+
+    def init_pheromones(self):
+        for node in self.nodes:
+            edges = self.get_node_edges(node)
+            Ni = len(edges)
+            sigma_Wi = sum(edge.to_node.num_users for edge in edges
+                           if edge.to_node in self.destination_nodes)
+            for edge in edges:
+                self.init_edge_pheromone(edge, Ni, sigma_Wi)
+
+    def init_edge_pheromone(self, edge, Ni, sigma_Wi):
+        Wi = edge.to_node.num_users
+        if edge.to_node in self.destination_nodes:
+            edge.pheromone = (Ni * (Wi / sigma_Wi) + 1) / (2 * Ni)
+        else:
+            edge.pheromone = 1 / (2 * Ni)
+
+    def print_pheromones(self):
+        pass
