@@ -7,10 +7,17 @@ import matplotlib.pyplot as plt
 def main():
     network = Network()
 
-    for node in network.nodes:
-        for edge in network.get_node_edges(node):
-            print(edge.pheromone)
-        print("-" * 50)
+    # Print network info
+    print("Source Nodes:")
+    for node in network.source_nodes:
+        print(node)
+    print("-" * 50)
+    print("Destination Nodes:")
+    for node in network.destination_nodes:
+        print(node)
+    print("-" * 50)
+    print("Pheromones:\n")
+    network.print_pheromones()
 
     # Draw edges
     for edge in network.unique_edges:

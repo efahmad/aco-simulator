@@ -9,11 +9,18 @@ class Edge(object):
         self.to_node = to_node
         self.pheromone = pheromone
 
+    def __str__(self):
+        return "From {0} To {1}".format(self.from_node, self.to_node)
+
 
 class Node(object):
-    def __init__(self, location, num_users):
+    def __init__(self, name, location, num_users):
         self.location = location
         self.num_users = num_users
+        self.name = name
+
+    def __str__(self):
+        return self.name
 
 
 class Network(object):
@@ -40,8 +47,11 @@ class Network(object):
         # Get 100 random x,y between boundaries
         x_array = np.random.uniform(low=self.left_boundary, high=self.right_boundary, size=self.num_nodes)
         y_array = np.random.uniform(low=self.bottom_boundary, high=self.top_boundary, size=self.num_nodes)
+        counter = 0
         for x, y in zip(x_array, y_array):
-            self.nodes.append(Node(np.array([x, y]), np.random.randint(low=1, high=20)))
+            counter += 1
+            name = "Node_{0}".format(counter)
+            self.nodes.append(Node(name, np.array([x, y]), np.random.randint(low=1, high=20)))
 
         # Select source & destination nodes
         source_range = (self.left_boundary + self.right_boundary / 100,
@@ -84,10 +94,15 @@ class Network(object):
 
     def init_edge_pheromone(self, edge, Ni, sigma_Wi):
         Wi = edge.to_node.num_users
-        if edge.to_node in self.destination_nodes:
+        if sigma_Wi > 0 and edge.to_node in self.destination_nodes:
             edge.pheromone = (Ni * (Wi / sigma_Wi) + 1) / (2 * Ni)
-        else:
+        elif sigma_Wi > 0:
             edge.pheromone = 1 / (2 * Ni)
+        else:
+            edge.pheromone = 1 / Ni
 
     def print_pheromones(self):
-        pass
+        for node in self.nodes:
+            for edge in self.get_node_edges(node):
+                print("{0}: {1}".format(edge, edge.pheromone))
+            print()
